@@ -27,7 +27,7 @@ func NewGenerator(c *GeneratorConfig) *Generator {
 
 func (g *Generator) Generate(paths []string) error {
 	f, err := loader.NewFileLoader().WithProcessAnnotation(true).
-		Filtered(paths, func(abspath string, info fs.FileInfo, depth int) bool {
+		Filtered(paths, func(abspath string, info fs.FileInfo, _ int) bool {
 			return !info.IsDir() && !strings.HasSuffix(abspath, ".rego")
 		})
 	if err != nil {
@@ -91,5 +91,5 @@ func (g *Generator) matchRule(rule *ast.Rule) bool {
 			return true
 		}
 	}
-	return true
+	return false
 }

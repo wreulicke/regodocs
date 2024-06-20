@@ -6,14 +6,11 @@ linters:
     - testifylint # TODO fix
     - varnamelen
     - testpackage
-    - nosnakecase
     - nonamedreturns
     - nlreturn
     - ireturn
     - mnd
     - gomnd
-    - ifshort
-    - exhaustivestruct
     - exhaustruct
     - goconst
     - godox
@@ -24,16 +21,8 @@ linters:
     - gocognit
     - gocyclo
     - maintidx
-    # deprecated linters
-    - deadcode
-    - interfacer
-    - scopelint
-    - varcheck
-    - structcheck
-    - maligned
-    - funlen
-    - golint
     - execinquery
+    - gochecknoglobals
 
 issues:
   exclude-rules:

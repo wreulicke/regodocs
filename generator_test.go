@@ -18,6 +18,8 @@ func newDefaultRegexps() []*regexp.Regexp {
 }
 
 func TestGenerator(t *testing.T) {
+	t.Parallel()
+
 	dir := t.TempDir()
 	g := NewGenerator(&GeneratorConfig{
 		OutputPath: dir,
