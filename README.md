@@ -35,10 +35,6 @@ Flags:
 See [testadata](./testdata/) and
 also See [generated document](./.snapshot/TestGenerator)
 
-## TODO
-
-- Add description for rules
-
 ## License
 
 MIT License
