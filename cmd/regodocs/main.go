@@ -13,7 +13,7 @@ func RootCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "regodocs",
 		Short: "Generate documentation from Rego policy files",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *cobra.Command, _ []string) error {
 			return cmd.Help()
 		},
 	}
