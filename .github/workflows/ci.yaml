@@ -21,7 +21,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
-          version: v1.58.2
+          version: v1.59.0
       - uses: actions/checkout@v4
       - name: test
         run: make test
