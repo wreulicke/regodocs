@@ -12,5 +12,5 @@ deny_foo contains msg if {
 }
 
 allow if {
-  input.path == "/etc/hosts"
+	input.path == "/etc/hosts"
 }
