@@ -1,3 +1,6 @@
+# METADATA
+# description: |
+#   This package contains test policies.
 package test
 
 import rego.v1

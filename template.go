@@ -7,8 +7,9 @@ import (
 )
 
 var docTemplate = `
-# {{.Package}}
+# {{.Package.Name}}
 
+{{.Package.Description}}
 ## Rules
 
 {{range .Rules -}}
@@ -18,12 +19,22 @@ var docTemplate = `
 {{- end}}
 `
 
+type Package struct {
+	Name        string
+	Description string
+}
+
 type Rule struct {
 	Name        string
 	Description string
 }
 
-func newTemplateData(pkg string, rules []*ast.Rule) *templateData {
+type templateData struct {
+	Package *Package
+	Rules   []*Rule
+}
+
+func newTemplateData(pkg *Package, rules []*ast.Rule) *templateData {
 	td := &templateData{
 		Package: pkg,
 	}
@@ -50,11 +61,6 @@ func newRule(rule *ast.Rule) *Rule {
 		r.Description = rule.Annotations[0].Description
 	}
 	return &r
-}
-
-type templateData struct {
-	Package string
-	Rules   []*Rule
 }
 
 func newTemplate() *template.Template {

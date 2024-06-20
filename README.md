@@ -37,7 +37,6 @@ also See [generated document](./.snapshot/TestGenerator)
 
 ## TODO
 
-- Add description for packages
 - Add description for rules
 
 ## License

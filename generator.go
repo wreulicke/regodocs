@@ -21,6 +21,11 @@ type GeneratorConfig struct {
 	Patterns   []*regexp.Regexp
 }
 
+type packageSet struct {
+	Package *Package
+	Files   []*loader.RegoFile
+}
+
 func NewGenerator(c *GeneratorConfig) *Generator {
 	return &Generator{GeneratorConfig: c}
 }
@@ -34,14 +39,25 @@ func (g *Generator) Generate(paths []string) error {
 		return fmt.Errorf("failed to load policy: %w", err)
 	}
 
-	packageMap := make(map[string][]*loader.RegoFile)
+	packageMap := make(map[string]*packageSet)
 	for _, m := range f.Modules {
 		packageName := m.Parsed.Package.Path.String()
 		packageName = strings.TrimPrefix(packageName, "data.") // i don't know why this is necessary
 		if packageMap[packageName] == nil {
-			packageMap[packageName] = []*loader.RegoFile{m}
+			packageMap[packageName] = &packageSet{
+				Package: &Package{
+					Name: packageName,
+				},
+				Files: []*loader.RegoFile{m},
+			}
 		} else {
-			packageMap[packageName] = append(packageMap[packageName], m)
+			packageMap[packageName].Files = append(packageMap[packageName].Files, m)
+		}
+		if len(m.Parsed.Annotations) > 0 && m.Parsed.Annotations[0].Description != "" {
+			if packageMap[packageName].Package.Description != "" {
+				return fmt.Errorf("package %s has multiple descriptions", packageName)
+			}
+			packageMap[packageName].Package.Description = m.Parsed.Annotations[0].Description
 		}
 	}
 
@@ -51,9 +67,9 @@ func (g *Generator) Generate(paths []string) error {
 		defer f.Close()
 		return t.Execute(f, data)
 	}
-	for pkg, files := range packageMap {
+	for pkg, packageSet := range packageMap {
 		var rules []*ast.Rule
-		for _, file := range files {
+		for _, file := range packageSet.Files {
 			rules = append(rules, file.Parsed.Rules...)
 		}
 		rules = g.matchedRules(rules)
@@ -66,7 +82,7 @@ func (g *Generator) Generate(paths []string) error {
 		if err != nil {
 			return fmt.Errorf("failed to open file: %w", err)
 		}
-		err = write(*newTemplateData(pkg, rules), f)
+		err = write(*newTemplateData(packageSet.Package, rules), f)
 		if err != nil {
 			return fmt.Errorf("failed to write template: %w", err)
 		}
