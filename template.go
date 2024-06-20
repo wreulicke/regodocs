@@ -15,8 +15,7 @@ var docTemplate = `
 ### {{.Name}}
 
 {{.Description}}
-
-{{end}}
+{{- end}}
 `
 
 type Rule struct {
