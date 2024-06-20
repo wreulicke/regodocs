@@ -1,7 +1,9 @@
 # regodocs
 
 Document Generator from Rego. 
-This generates markdown from rego files.
+This generates markdown files from [annotations](https://www.openpolicyagent.org/docs/latest/policy-language/#metadata) in rego files.
+
+This tool aims to help documentation for conftest.
 
 ## Install
 
