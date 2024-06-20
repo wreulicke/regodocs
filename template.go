@@ -1,6 +1,7 @@
 package regodocs
 
 import (
+	"strings"
 	"text/template"
 
 	"github.com/open-policy-agent/opa/ast"
@@ -11,6 +12,10 @@ var docTemplate = `
 
 {{.Package.Description}}
 ## Rules
+
+{{range .Rules -}}
+- [{{.Name}}](#{{.Name | anchor}})
+{{- end}}
 
 {{range .Rules -}}
 ### {{.Name}}
@@ -63,6 +68,16 @@ func newRule(rule *ast.Rule) *Rule {
 	return &r
 }
 
+func funcMap() template.FuncMap {
+	return template.FuncMap{
+		"anchor": anchor,
+	}
+}
+
+func anchor(heading string) string {
+	return strings.ReplaceAll(strings.ToLower(heading), " ", "-")
+}
+
 func newTemplate() *template.Template {
-	return template.Must(template.New("doc").Parse(docTemplate))
+	return template.Must(template.New("doc").Funcs(funcMap()).Parse(docTemplate))
 }

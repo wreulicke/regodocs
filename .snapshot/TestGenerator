@@ -5,6 +5,8 @@ This package contains test policies.
 
 ## Rules
 
+- [deny_test](#deny_test)
+
 ### deny_test
 
 This is a test policy that denies access to the /etc/shadow file."
