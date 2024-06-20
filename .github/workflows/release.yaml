@@ -13,6 +13,8 @@ jobs:
     name: GoReleaser
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
@@ -20,6 +22,8 @@ jobs:
       - name: Run go mod download
         run: go mod download
       - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          version: "v2"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: curl -sL https://git.io/goreleaser | bash
