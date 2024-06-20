@@ -12,7 +12,7 @@ import (
 func RootCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "regodocs",
-		Short: "Generate documentation from Rego policy files",
+		Short: "root command for regodocs, just show help",
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			return cmd.Help()
 		},
@@ -29,8 +29,9 @@ func GenerateCmd() *cobra.Command {
 	var outputPath string
 	var patterns []string
 	cmd := &cobra.Command{
-		Use:   "generate",
-		Short: "Generate documentation from Rego policy files",
+		Use:        "generate POLICY_PATH...",
+		Short:      "Generate documentation from Rego policy files",
+		ArgAliases: []string{"POLICY_PATH..."},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if outputPath == "" {
 				return cmd.Help()
