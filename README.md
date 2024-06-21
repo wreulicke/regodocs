@@ -9,7 +9,7 @@ This tool aims to help documentation for conftest.
 
 ```bash
 # linux/macOS
-curl -o regodocs -sL "https://github.com/wreulicke/regodocs/releases/download/v0.0.1/regodocs_0.0.1_$(uname -s | tr "[:upper:]" "[:lower:]")_$(uname -m)"
+curl -o regodocs -sL "https://github.com/wreulicke/regodocs/releases/download/v0.0.2/regodocs_0.0.2_$(uname -s | tr "[:upper:]" "[:lower:]")_$(uname -m)"
 chmod +x regodocs
 mv regodocs /usr/local/bin
 
