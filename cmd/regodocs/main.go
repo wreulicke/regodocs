@@ -65,7 +65,7 @@ func GenerateCmd() *cobra.Command {
 }
 
 func compileRegexps(regexps []string) ([]*regexp.Regexp, error) {
-	var compiled []*regexp.Regexp
+	compiled := make([]*regexp.Regexp, 0, len(regexps))
 	for _, r := range regexps {
 		re, err := regexp.Compile(r)
 		if err != nil {
