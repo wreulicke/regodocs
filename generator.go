@@ -17,8 +17,9 @@ type Generator struct {
 }
 
 type GeneratorConfig struct {
-	OutputPath string
-	Patterns   []*regexp.Regexp
+	OutputPath        string
+	Patterns          []*regexp.Regexp
+	IgnoreFilePattern []*regexp.Regexp
 }
 
 type packageSet struct {
@@ -33,7 +34,7 @@ func NewGenerator(c *GeneratorConfig) *Generator {
 func (g *Generator) Generate(paths []string) error {
 	f, err := loader.NewFileLoader().WithProcessAnnotation(true).
 		Filtered(paths, func(abspath string, info fs.FileInfo, _ int) bool {
-			return !info.IsDir() && !strings.HasSuffix(abspath, ".rego")
+			return !info.IsDir() && !strings.HasSuffix(abspath, ".rego") && !matchIgnores(g.GeneratorConfig.IgnoreFilePattern, abspath)
 		})
 	if err != nil {
 		return fmt.Errorf("failed to load policy: %w", err)
@@ -104,6 +105,15 @@ func (g *Generator) matchRule(rule *ast.Rule) bool {
 	for _, p := range g.GeneratorConfig.Patterns {
 		ruleName := rule.Head.Name.String()
 		if p.MatchString(ruleName) {
+			return true
+		}
+	}
+	return false
+}
+
+func matchIgnores(ignorePatterns []*regexp.Regexp, path string) bool {
+	for _, p := range ignorePatterns {
+		if p.MatchString(path) {
 			return true
 		}
 	}

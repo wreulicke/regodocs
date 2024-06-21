@@ -22,8 +22,9 @@ func TestGenerator(t *testing.T) {
 
 	dir := t.TempDir()
 	g := NewGenerator(&GeneratorConfig{
-		OutputPath: dir,
-		Patterns:   newDefaultRegexps(),
+		OutputPath:        dir,
+		Patterns:          newDefaultRegexps(),
+		IgnoreFilePattern: []*regexp.Regexp{regexp.MustCompile(".*_test.rego")},
 	})
 
 	err := g.Generate([]string{"testdata"})
@@ -32,7 +33,7 @@ func TestGenerator(t *testing.T) {
 	}
 
 	s := snap.New()
-	f, err := os.Open(dir + "/test.md")
+	f, err := os.Open(dir + "/bar.md")
 	if os.IsNotExist(err) {
 		t.Errorf("expected file to exist, got %v", err)
 	}

@@ -1,4 +1,4 @@
-package test
+package bar
 
 import rego.v1
 
