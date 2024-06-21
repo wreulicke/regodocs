@@ -3,17 +3,15 @@ package regodocs
 import (
 	"io"
 	"os"
-	"regexp"
 	"testing"
 
+	"github.com/gobwas/glob"
 	"github.com/wreulicke/snap"
 )
 
-func newDefaultRegexps() []*regexp.Regexp {
-	return []*regexp.Regexp{
-		regexp.MustCompile("deny.*"),
-		regexp.MustCompile("violation.*"),
-		regexp.MustCompile("warn.*"),
+func newDefaultRegexps() []glob.Glob {
+	return []glob.Glob{
+		glob.MustCompile("{deny*, violation*, warn*}"),
 	}
 }
 
@@ -24,7 +22,7 @@ func TestGenerator(t *testing.T) {
 	g := NewGenerator(&GeneratorConfig{
 		OutputPath:        dir,
 		Patterns:          newDefaultRegexps(),
-		IgnoreFilePattern: []*regexp.Regexp{regexp.MustCompile(".*_test.rego")},
+		IgnoreFilePattern: []glob.Glob{glob.MustCompile("*_test.rego")},
 	})
 
 	err := g.Generate([]string{"testdata"})

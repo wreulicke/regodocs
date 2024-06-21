@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
-	"regexp"
 
+	"github.com/gobwas/glob"
 	"github.com/spf13/cobra"
 	"github.com/wreulicke/regodocs"
 )
@@ -41,33 +41,33 @@ func GenerateCmd() *cobra.Command {
 				return cmd.Help()
 			}
 
-			patternRegexps, err := compileRegexps(patterns)
+			patternGlobs, err := compilePatterns(patterns)
 			if err != nil {
 				return err
 			}
-			ignoreFileRegexps, err := compileRegexps(ignoreFilePatterns)
+			ignoreFileGlobs, err := compilePatterns(ignoreFilePatterns)
 			if err != nil {
 				return err
 			}
 			g := regodocs.NewGenerator(&regodocs.GeneratorConfig{
 				OutputPath:        outputPath,
-				Patterns:          patternRegexps,
-				IgnoreFilePattern: ignoreFileRegexps,
+				Patterns:          patternGlobs,
+				IgnoreFilePattern: ignoreFileGlobs,
 			})
 			return g.Generate(args)
 		},
 	}
 	cmd.Flags().StringVarP(&outputPath, "output", "o", "", "output path for generated documentation")
-	cmd.Flags().StringSliceVarP(&patterns, "pattern", "p", []string{"deny.*", "violation.*", "warn.*"}, "regexp to filter rules")
-	cmd.Flags().StringSliceVarP(&ignoreFilePatterns, "ignore", "i", []string{".*_test.rego"}, "regexp to ignore files")
+	cmd.Flags().StringSliceVarP(&patterns, "pattern", "p", []string{"{deny*, violation*, warn*}"}, "regexp to filter rules")
+	cmd.Flags().StringSliceVarP(&ignoreFilePatterns, "ignore", "i", []string{"*_test.rego"}, "regexp to ignore files")
 
 	return cmd
 }
 
-func compileRegexps(regexps []string) ([]*regexp.Regexp, error) {
-	compiled := make([]*regexp.Regexp, 0, len(regexps))
-	for _, r := range regexps {
-		re, err := regexp.Compile(r)
+func compilePatterns(patterns []string) ([]glob.Glob, error) {
+	compiled := make([]glob.Glob, 0, len(patterns))
+	for _, r := range patterns {
+		re, err := glob.Compile(r)
 		if err != nil {
 			return nil, fmt.Errorf("failed to compile regexp %s: %w", r, err)
 		}

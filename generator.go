@@ -5,9 +5,9 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 
+	"github.com/gobwas/glob"
 	"github.com/open-policy-agent/opa/ast"
 	"github.com/open-policy-agent/opa/loader"
 )
@@ -18,8 +18,8 @@ type Generator struct {
 
 type GeneratorConfig struct {
 	OutputPath        string
-	Patterns          []*regexp.Regexp
-	IgnoreFilePattern []*regexp.Regexp
+	Patterns          []glob.Glob
+	IgnoreFilePattern []glob.Glob
 }
 
 type packageSet struct {
@@ -34,7 +34,7 @@ func NewGenerator(c *GeneratorConfig) *Generator {
 func (g *Generator) Generate(paths []string) error {
 	f, err := loader.NewFileLoader().WithProcessAnnotation(true).
 		Filtered(paths, func(abspath string, info fs.FileInfo, _ int) bool {
-			return !info.IsDir() && !strings.HasSuffix(abspath, ".rego") && !matchIgnores(g.GeneratorConfig.IgnoreFilePattern, abspath)
+			return !info.IsDir() && !strings.HasSuffix(abspath, ".rego") && !matchGlobs(g.GeneratorConfig.IgnoreFilePattern, abspath)
 		})
 	if err != nil {
 		return fmt.Errorf("failed to load policy: %w", err)
@@ -102,18 +102,12 @@ func (g *Generator) matchedRules(rules []*ast.Rule) []*ast.Rule {
 }
 
 func (g *Generator) matchRule(rule *ast.Rule) bool {
-	for _, p := range g.GeneratorConfig.Patterns {
-		ruleName := rule.Head.Name.String()
-		if p.MatchString(ruleName) {
-			return true
-		}
-	}
-	return false
+	return matchGlobs(g.GeneratorConfig.Patterns, rule.Head.Name.String())
 }
 
-func matchIgnores(ignorePatterns []*regexp.Regexp, path string) bool {
-	for _, p := range ignorePatterns {
-		if p.MatchString(path) {
+func matchGlobs(globs []glob.Glob, path string) bool {
+	for _, p := range globs {
+		if p.Match(path) {
 			return true
 		}
 	}
