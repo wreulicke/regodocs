@@ -58,8 +58,8 @@ func GenerateCmd() *cobra.Command {
 		},
 	}
 	cmd.Flags().StringVarP(&outputPath, "output", "o", "", "output path for generated documentation")
-	cmd.Flags().StringSliceVarP(&patterns, "pattern", "p", []string{"{deny*, violation*, warn*}"}, "regexp to filter rules")
-	cmd.Flags().StringSliceVarP(&ignoreFilePatterns, "ignore", "i", []string{"*_test.rego"}, "regexp to ignore files")
+	cmd.Flags().StringSliceVarP(&patterns, "pattern", "p", []string{"{deny*, violation*, warn*}"}, "glob to filter rules")
+	cmd.Flags().StringSliceVarP(&ignoreFilePatterns, "ignore", "i", []string{"*_test.rego"}, "glob to ignore files")
 
 	return cmd
 }
